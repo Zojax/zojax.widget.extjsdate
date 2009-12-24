@@ -1,0 +1,201 @@
+===================
+ExtJS Editor widget
+===================
+
+    >>> from pytz import utc
+    >>> from datetime import date, datetime, time
+    >>> from zope import component, interface, event
+    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.lifecycleevent import ObjectCreatedEvent
+    >>> from zope.app.testing.functional import getRootFolder
+    >>> from zope.app.component.hooks import setSite
+    >>> from zope.app.intid import IntIds
+    >>> from zope.app.intid.interfaces import IIntIds
+    >>> from zojax.skintool.interfaces import ISkinable
+    >>> from zojax.widget.extjsdate.tests.content import Page1, Page2, Page3
+
+    >>> d = date(2009, 1, 1)
+    >>> t = time(1,1,1)
+    >>> dt = datetime(2009, 1, 1, 1, 1, tzinfo=utc)
+
+    >>> root = getRootFolder()
+    >>> interface.alsoProvides(root, ISkinable)
+    >>> setSite(root)
+
+    >>> root['ids'] = IntIds()
+    >>> root.getSiteManager().registerUtility(root['ids'], IIntIds)
+
+    >>> page1 = Page1()
+    >>> page1.date = d
+    >>> event.notify(ObjectCreatedEvent(page1))
+    >>> root['page1'] = page1
+
+    >>> page2 = Page2()
+    >>> page2.date = dt
+    >>> event.notify(ObjectCreatedEvent(page2))
+    >>> root['page2'] = page2
+
+    >>> page3 = Page3()
+    >>> page3.date = t
+    >>> event.notify(ObjectCreatedEvent(page3))
+    >>> root['page3'] = page3
+
+
+
+Select widgets
+--------------
+
+    >>> admin = Browser()
+    >>> admin.addHeader("Authorization", "Basic mgr:mgrpw")
+    >>> admin.handleErrors = False
+    >>> admin.open('http://localhosr/settings/')
+    >>> admin.getLink('Portal skin').click()
+    >>> admin.getControl(name="form.widgets.layers:list").value = ['extjsdate']
+    >>> admin.getControl('Save').click()
+
+
+Date widget
+-----------
+
+    >>> user = Browser()
+    >>> user.addHeader("Authorization", "Basic user:userpw")
+    >>> user.handleErrors = False
+
+Included js
+
+    >>> user.open('http://localhosr/page1/context.html')
+    >>> print user.contents
+    <html>
+    ...
+    <script type="text/javascript" src="http://localhosr/.../jquery.js"></script>
+    <script type="text/javascript" src="http://localhosr/.../extjs.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhosr/.../extjs.css" />
+    <script type="text/javascript" src="http://localhosr/.../extjs-widgets.js"></script>
+    <script type="text/javascript">
+    Ext.EventManager.onDocumentReady(function() {
+       var dateField = new Ext.form.DateField({
+          applyTo: 'form-widgets-date', name: 'form.widgets.date', format: 'm/d/y'});
+       dateField.setValue('01/01/09');
+    })</script>
+    ...
+    <div class="z-form-field">
+      <label for="form-widgets-date" title="">Date</label>
+      <span class="z-form-fieldRequired">&nbsp;</span>
+      <div class="z-form-help"></div>
+      <div>
+         <input id="form-widgets-date"
+           name="form.widgets.date"
+           class="widget-extjs-date required date-field"
+           value="01/01/09" type="text" />
+    </div>
+    ...
+    </html>
+
+set value
+
+    >>> user.getControl('Date').value = '15/a3/09'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+    >>> print user.contents
+    <html>
+    ...
+    <div class="error">time data did not match format:  data=15/a3/09  fmt=%m/%d/%y</div>
+    ...
+    </html>
+
+    >>> user.getControl('Date').value = '02/03/09'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+
+    >>> page1.date
+    datetime.date(2009, 2, 3)
+
+
+Datetime widget
+---------------
+
+    >>> user.open('http://localhosr/page2/context.html')
+    >>> print user.contents
+    <html>
+    ...
+    <script type="text/javascript" src="http://localhosr/.../jquery.js"></script>
+    <script type="text/javascript" src="http://localhosr/.../extjs.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhosr/.../extjs.css" />
+    <script type="text/javascript" src="http://localhosr/.../extjs-widgets.js"></script>
+    <script type="text/javascript">
+    Ext.EventManager.onDocumentReady(function(){
+     var dateField = new Ext.ux.form.DateTime({
+          applyTo:'form-widgets-date', name:'form.widgets.date', timeFormat:'H:i'});
+     dateField.setValue('2009-01-01 01:01');
+     });</script>
+    ...
+    <label for="form-widgets-date" title="">Datetime</label>
+    <span class="z-form-fieldRequired">&nbsp;</span>
+    <div class="z-form-help"></div>
+    <div>
+       <input id="form-widgets-date"
+            name="form.widgets.date"
+            class="widget-extjs-datetime required datetime-field"
+            style="display: none" value="2009-01-01 01:01"
+            type="text" />
+    ...
+    </html>
+
+    >>> user.getControl('Datetime').value = '2009-55-03 05:dd'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+    >>> print user.contents
+    <html>
+    ...
+    <div class="error">time data did not match format:  data=2009-55-03 05:dd  fmt=%Y-%m-%d %H:%M:%S</div>
+    ...
+    </html>
+
+    >>> user.getControl('Datetime').value = '2009-02-03 05:10'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+
+    >>> page2.date
+    datetime.datetime(2009, 1, 1, 1, 1, tzinfo=<UTC>)
+
+Time widget
+---------------
+
+    >>> user.open('http://localhosr/page3/context.html')
+    >>> print user.contents
+    <html>
+    ...
+    <script type="text/javascript" src="http://localhosr/.../jquery.js"></script>
+    <script type="text/javascript" src="http://localhosr/.../extjs.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhosr/.../extjs.css" />
+    <script type="text/javascript" src="http://localhosr/.../extjs-widgets.js"></script>
+    <script type="text/javascript">
+    Ext.EventManager.onDocumentReady(function() {
+       var timeField = new Ext.form.TimeField({
+          applyTo: 'form-widgets-date', name: 'form.widgets.date', format: 'H:i:s'});
+       timeField.setValue('01:01:01');
+    })</script>
+    ...
+    <label for="form-widgets-date" title="">Time</label>
+      <span class="z-form-fieldRequired">&nbsp;</span>
+      <div class="z-form-help"></div>
+      <div>
+         <input id="form-widgets-date"
+           name="form.widgets.date"
+           class="widget-extjs-time required time-field"
+           value="01:01:01" type="text" />
+    ...
+    </html>
+
+    >>> user.getControl('Time').value = '10:00:dd'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+    >>> print user.contents
+    <html>
+    ...
+    <div class="error">time data did not match format:  data=10:00:dd  fmt=%H:%M:%S</div>
+    ...
+    </html>
+
+    >>> user.getControl('Time').value = '10:10:10'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+
+    >>> page3.date
+    datetime.time(10, 10, 10, tzinfo=<UTC>)
+
+    >>> setSite(None)
