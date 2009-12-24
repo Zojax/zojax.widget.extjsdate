@@ -1,0 +1,50 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:z3c="http://namespaces.zope.org/z3c"
+   xmlns:zojax="http://namespaces.zope.org/zojax"
+   i18n_domain="zojax.widget.extjsdate">
+
+  <!-- widgets -->
+  <adapter factory=".date.DateFieldWidget" />
+  <adapter factory=".date.DateDataConverter" />
+
+  <adapter factory=".dtwidget.DatetimeFieldWidget" />
+  <adapter factory=".dtwidget.DatetimeDataConverter" />
+
+  <adapter factory=".timewidget.TimeFieldWidget" />
+  <adapter factory=".timewidget.TimeDataConverter" />
+
+  <!-- widget display -->
+  <z3c:widgetTemplate
+     mode="display"
+     widget=".interfaces.IDateWidget"
+     layer=".interfaces.IDateWidgetsLayer"
+     template="datewidget_display.pt" />
+
+  <z3c:widgetTemplate
+     mode="display"
+     widget=".interfaces.IDatetimeWidget"
+     layer=".interfaces.IDateWidgetsLayer"
+     template="dtwidget_display.pt" />
+
+  <z3c:widgetTemplate
+     mode="display"
+     widget=".interfaces.ITimeWidget"
+     layer=".interfaces.IDateWidgetsLayer"
+     template="timewidget_display.pt" />
+
+  <!-- skintool layer -->
+  <zojax:layer
+     name="extjsdate"
+     layer=".interfaces.IDateWidgetsLayer"
+     title="ExtJS Date/Datetime widgets"
+     description="Javascript version of standard date and datetime fields." />
+
+  <!-- resources -->
+  <zojax:resourceinclude
+     name="extjs-widgets-datetime.js"
+     file="datetime.js"
+     require="extjs" library="extjs-widgets" type="javascript"
+     mapping=".css:zrt" />
+
+</configure>
