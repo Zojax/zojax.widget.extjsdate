@@ -1,63 +1,8 @@
-=======
-CHANGES
-=======
-
-
-0.5.2 (2009-11-23)
+1.0.2 (Unreleased)
 ------------------
 
-- Tests updated
 
-
-0.5.1 (2009-10-05)
+1.0.1 (2010-01-19)
 ------------------
 
-- Timezone fixes, tests fixed
-
-
-0.5.0 (2009-08-12)
-------------------
-
-- Use full year field
-
-- Fixed timezone issue on default value
-
-- Copyright changed to 'Zope Foundation and Contributors'
-
-
-0.4.0 (2009-05-06)
-------------------
-
-- Time widget added
-
-
-0.3.0 (2009-04-21)
-------------------
-
-- Insert todays value to date widget for empty and required field
-
-- Do not use z3c.autoinclude
-
-
-0.2.2 (2009-03-31)
-------------------
-
-- Use old datetime.js
-
-
-0.2.1 (2009-03-31)
-------------------
-
-- Fixed value rendering
-
-
-0.2.0 (2009-03-30)
-------------------
-
-- Upadate DateTime widget js code
-
-
-0.1.0 (2009-03-15)
-------------------
-
-- Initial release
+- zojax initial release
