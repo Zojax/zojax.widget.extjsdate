@@ -2,7 +2,10 @@
    xmlns="http://namespaces.zope.org/zope"
    xmlns:z3c="http://namespaces.zope.org/z3c"
    xmlns:zojax="http://namespaces.zope.org/zojax"
+   xmlns:i18n="http://namespaces.zope.org/i18n"
    i18n_domain="zojax.widget.extjsdate">
+
+  <i18n:registerTranslations directory="locales" />
 
   <!-- widgets -->
   <adapter factory=".date.DateFieldWidget" />
