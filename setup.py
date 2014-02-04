@@ -67,6 +67,7 @@ setup(name='zojax.widget.extjsdate',
                                   'zojax.autoinclude',
                                   'zojax.content.type',
                                   'zojax.content.forms',
+                                  'zojax.pageelement',
                                   ]),
       include_package_data = True,
       zip_safe = False
