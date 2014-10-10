@@ -69,7 +69,7 @@ class DatetimeWidget(TextWidget):
         else:
             tz = ITZInfo(self.request, utc)
             dt = datetime.now(tz)
-            dt = dt.replace(minute=0, second=0, microsecond=0)
+            # dt = dt.replace(minute=0, second=0, microsecond=0)
             value = dt.strftime('%Y-%m-%d %H:%M')
 
         includeInplaceSource(jssource%{
